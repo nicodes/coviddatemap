@@ -14,3 +14,20 @@ services:
   #  - ./db/init.sh:/docker-entrypoint-initdb.d/init.sh
   restart: always
   command: -p $DB_PORT
+ api:
+  depends_on:
+   - db
+  build: ./api
+  environment:
+   - NODE_ENV
+   - PORT=$API_PORT
+   - PGHOST
+   - PGPORT
+   - PGDATABASE
+   - PGUSER
+   - PGPASSWORD
+  ports:
+   - $API_PORT:$API_PORT
+  volumes:
+   - ./api:/app
+   - /app/node_modules
