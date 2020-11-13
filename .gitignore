@@ -8,3 +8,4 @@ db/ingest/cb_2018_us_county_500k
 db/ingest/jhu/csse_covid_19_daily_reports
 
 api/node_modules
+ui/node_modules
