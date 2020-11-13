@@ -1,4 +1,3 @@
--- invisible backdrop only, no date filter
 CREATE OR REPLACE FUNCTION mvt_!REGION!_all(
     z integer,
     x integer, 
@@ -9,9 +8,11 @@ DECLARE
 BEGIN
     RETURN (
 		WITH mvtgeom AS (
-			SELECT gid, ST_AsMVTGeom(geom, te) AS geom
-			FROM regions.!REGION!
-    	) SELECT ST_AsMVT(mvtgeom.*) FROM mvtgeom
+			SELECT r.gid, ST_AsMVTGeom(r.geom, te) geom
+			FROM regions.!REGION! r
+			WHERE ST_Intersects(r.geom, te)
+    	)
+		SELECT ST_AsMVT(mvtgeom.*) FROM mvtgeom
 	);
 END;
 $$ LANGUAGE plpgsql;

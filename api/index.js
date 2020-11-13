@@ -20,15 +20,18 @@ const sanitizeDate = s => {
 }
 
 app.get('/mvt/:region/:type/:z/:x/:y', async (req, res) => {
-    const { region, type, z, x, y } = req.params
+    const { region, z, x, y } = req.params
+    const type = req.params.type.replace('-', '_')
 
     if (type === 'quint') {
-        const { metric } = req.query
+        const { metric, buckets } = req.query
         const selectedGids = req.query['selected-gids']
         const startDate = sanitizeDate(req.query['start-date'])
         const endDate = sanitizeDate(req.query['end-date'])
 
-        const q = `SELECT mvt_${region}_${metric}(${z},${x},${y}`
+        const q = `SELECT mvt_${region}_${metric}(`
+            + `${z},${x},${y}`
+            + `,${buckets}`
             + `,ARRAY[${selectedGids}]::integer[]`
             + `,'${startDate}'`
             + (endDate ? `,'${endDate}'` : '')

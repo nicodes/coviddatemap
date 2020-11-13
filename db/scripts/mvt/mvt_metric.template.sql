@@ -3,6 +3,7 @@ CREATE OR REPLACE FUNCTION mvt_!REGION!_!COLNAME!(
     z integer,
     x integer, 
     y integer,
+	b integer,
 	gids integer[],
 	d date
 ) RETURNS BYTEA AS $$
@@ -11,10 +12,15 @@ DECLARE
 BEGIN
     RETURN (
 		WITH mvtgeom AS (
-			SELECT NTILE(5) OVER (ORDER BY !COLNAME!) AS quint, ST_AsMVTGeom(geom, te) AS geom
-			FROM regions.!REGION!
-			JOIN jhu.!REGION! ON regions.!REGION!.gid = jhu.!REGION!.fk
-			WHERE regions.!REGION!.gid = ANY(gids) AND jhu.!REGION!.date = d -- AND ST_Intersects(geom, te)
+			WITH t AS (
+				SELECT j.fk, NTILE(b) OVER (ORDER BY j.!COLNAME!) quint
+				FROM jhu.!REGION! j
+				WHERE j.fk = ANY(gids) AND j.date = d
+			)
+			SELECT t.quint, ST_AsMVTGeom(r.geom, te) geom
+			FROM regions.!REGION! r
+			LEFT JOIN t ON r.gid = t.fk
+			WHERE r.gid = ANY(gids) AND ST_Intersects(r.geom, te)
     	) SELECT ST_AsMVT(mvtgeom.*) FROM mvtgeom
 	);
 END;
@@ -25,6 +31,7 @@ CREATE OR REPLACE FUNCTION mvt_!REGION!_!COLNAME!(
     z integer,
     x integer, 
     y integer,
+	b integer,
 	gids integer[],
 	d1 date,
 	d2 date
@@ -33,17 +40,18 @@ DECLARE
 	te GEOMETRY := ST_TileEnvelope(z, x, y);
 BEGIN
     RETURN (
-		WITH dif AS (
-			SELECT a.fk, a.!COLNAME! - b.!COLNAME! AS d
-			FROM jhu.!REGION! AS a
-			JOIN jhu.!REGION! AS b ON a.fk = b.fk
-			WHERE a.date = d1 AND b.date = d2
-		), mvtgeom AS (
-			SELECT NTILE(5) OVER (ORDER BY d) AS quint, ST_AsMVTGeom(geom, te) AS geom
-			FROM regions.!REGION!
-			JOIN dif ON regions.!REGION!.gid = dif.fk
-			WHERE regions.!REGION!.gid = ANY(gids) -- AND ST_Intersects(geom, te)
-    	) SELECT ST_AsMVT(mvtgeom.*) FROM mvtgeom
+		WITH mvtgeom AS (
+			WITH t AS (
+				SELECT j1.fk, NTILE(b) OVER (ORDER BY j1.!COLNAME! - j2.!COLNAME!) quint
+				FROM jhu.!REGION! j1
+				JOIN jhu.!REGION! j2 ON j1.fk = j2.fk
+				WHERE j1.fk = ANY(gids) AND j1.date = d1 AND j2.date = d2
+			)
+			SELECT t.quint, ST_AsMVTGeom(r.geom, te) geom
+			FROM regions.!REGION! r
+			JOIN t ON r.gid = t.fk
+			WHERE r.gid = ANY(gids) AND ST_Intersects(r.geom, te)
+		) SELECT ST_AsMVT(mvtgeom.*) FROM mvtgeom
 	);
 END;
 $$ LANGUAGE plpgsql;

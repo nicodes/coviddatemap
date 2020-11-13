@@ -2,6 +2,8 @@
 # sh -ac 'source .env && db/init.sh'
 
 export PGHOST=0.0.0.0
+export PGUSER=$POSTGRES_USER
+export PGPASSWORD=$POSTGRES_PASSWORD
 
 psql -d postgres <<-EOSQL
  CREATE DATABASE $PGDATABASE;
