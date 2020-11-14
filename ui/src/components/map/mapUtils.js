@@ -4,8 +4,8 @@ const reqQuery = (metric, buckets, selectedGids, startDate, endDateBool, endDate
     `?metric=${metric}`
     + `&buckets=${buckets}`
     + `&selected-gids=${selectedGids}`
-    + `&start-date=${startDate.toLocaleDateString()}`
-    + `${endDateBool ? `&end-date=${endDate.toLocaleDateString()}` : ''}`
+    + `&start-date=${startDate.toISOString()}`
+    + `${endDateBool ? `&end-date=${endDate.toISOString()}` : ''}`
 
 const quintLayerPaint = buckets => {
     const opacity = 0.6 / buckets

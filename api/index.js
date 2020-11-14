@@ -15,7 +15,7 @@ const mvtResHeader = {
 const sanitizeDate = s => {
     if (s) {
         const d = new Date(s)
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+        return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
     }
 }
 
