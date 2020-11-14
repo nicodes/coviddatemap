@@ -3,16 +3,16 @@ import Header from './header/Header'
 import Drawer from './drawer/Drawer'
 import Map from './map/Map.js'
 
-const yesterday = new Date()
-yesterday.setDate(yesterday.getDate() - 1)
+// const yesterday = new Date('2020-11-08')
+// yesterday.setDate(yesterday.getDate() - 1)
 
 const App = () => {
   const [drawerOpen, setDrawerOpen] = useState(true)
   const [region, setRegion] = useState('countries')
   const [metric, setMetric] = useState('new_confirmed')
   const [buckets, setBuckets] = useState(3)
-  const [startDate, setStartDate] = useState(yesterday)
-  const [endDate, setEndDate] = useState(new Date())
+  const [startDate, setStartDate] = useState(new Date('2020-11-07'))
+  const [endDate, setEndDate] = useState(new Date('2020-03-22'))
   const [endDateBool, setEndDateBool] = useState(false)
   const [selectedGids, setSelectedGids] = useState([])
 
