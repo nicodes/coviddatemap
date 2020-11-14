@@ -1,6 +1,9 @@
 .DS_Store
 
+.env.prod
+
 db/data
+db/dump*
 db/ingest/**/*.sql
 db/ingest/World_Countries__Generalized
 db/ingest/cb_2018_us_state_500k
@@ -8,4 +11,6 @@ db/ingest/cb_2018_us_county_500k
 db/ingest/jhu/csse_covid_19_daily_reports
 
 api/node_modules
+
 ui/node_modules
+ui/build
