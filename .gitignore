@@ -2,7 +2,7 @@
 
 .env.prod
 
-db/data
+db/data*
 db/dump*
 db/ingest/**/*.sql
 db/ingest/World_Countries__Generalized

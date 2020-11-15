@@ -1,14 +1,18 @@
+CREATE OR REPLACE FUNCTION ingest_countries() RETURNS VOID AS $$
+DECLARE
+	d DATE := GREATEST((SELECT MAX(date) FROM jhu.countries), '2020-03-22');
+BEGIN
 INSERT INTO jhu.countries (
- 		fk,
- 		date,
- 		new_confirmed,
- 		total_confirmed,
- 		new_deaths,
- 		total_deaths,
- 		new_active,
- 		total_active,
- 		incidence_rate,
- 		case_fatality_ratio
+	fk,
+ 	date,
+ 	new_confirmed,
+ 	total_confirmed,
+ 	new_deaths,
+ 	total_deaths,
+ 	new_active,
+ 	total_active,
+ 	incidence_rate,
+ 	case_fatality_ratio
 ) ( 
 	SELECT
 		c.gid,
@@ -40,7 +44,10 @@ INSERT INTO jhu.countries (
 			AND (a.province IS NULL OR a.province = b.province)
 			AND (a.county IS NULL OR a.county = b.county)
 			AND a.date - INTERVAL '1 DAY' = b.date
+ 		WHERE d < a.date
 		GROUP BY a.country, a.date
 	) AS t
 	JOIN regions.countries AS c ON c.country = t.country
 );
+END;
+$$ LANGUAGE plpgsql;

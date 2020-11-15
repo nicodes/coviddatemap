@@ -1,14 +1,18 @@
+CREATE OR REPLACE FUNCTION ingest_us_counties() RETURNS VOID AS $$
+DECLARE
+	d DATE := GREATEST((SELECT MAX(date) FROM jhu.us_counties), '2020-03-22');
+BEGIN
 INSERT INTO jhu.us_counties (
- 		fk,
- 		date,
- 		new_confirmed,
- 		total_confirmed,
- 		new_deaths,
- 		total_deaths,
- 		new_active,
- 		total_active,
- 		incidence_rate,
- 		case_fatality_ratio
+ 	fk,
+	date,
+ 	new_confirmed,
+ 	total_confirmed,
+ 	new_deaths,
+ 	total_deaths,
+ 	new_active,
+ 	total_active,
+ 	incidence_rate,
+ 	case_fatality_ratio
 ) ( 
 	SELECT
 		c.gid,
@@ -37,9 +41,16 @@ INSERT INTO jhu.us_counties (
 		LEFT JOIN jhu.raw AS b
 			ON a.fips5 = b.fips5
 			AND a.date - INTERVAL '1 DAY' = b.date
-		WHERE a.country = 'United States'
+		WHERE a.country = 'United States' AND d < a.date
 		GROUP BY a.fips5, a.date
 	) AS t
 	JOIN regions.us_counties AS c
-		ON CONCAT(c.statefp, c.countyfp) = t.fips5
+	ON CONCAT(c.statefp, c.countyfp) = t.fips5
 );
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
