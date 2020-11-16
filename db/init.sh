@@ -1,52 +1,53 @@
 #!/bin/sh
-# sh -ac 'source .env && db/init.sh'
 
-PGHOST=$APP_HOST
+# sh -ac '. .env && db/init.sh'
+
+PGHOST=0.0.0.0
 PGUSER=$POSTGRES_USER
 PGPASSWORD=$POSTGRES_PASSWORD
 
-psql -d postgres <<-EOSQL
- CREATE DATABASE $PGDATABASE;
-EOSQL
+echo Starting db init
 
+# Create db and schemas
+psql -d postgres -c "CREATE DATABASE $PGDATABASE"
 psql <<-EOSQL
  CREATE EXTENSION postgis;
  CREATE SCHEMA regions;
  CREATE SCHEMA jhu;
 EOSQL
 
-## Seed regions
+# Seed regions
 shp2pgsql \
     -I -D -s 4326:3857 \
-    db/ingest/World_Countries__Generalized/World_Countries__Generalized_.shp \
+    $APP_ROOT/db/ingest/World_Countries__Generalized/World_Countries__Generalized_.shp \
     regions.countries \
     | psql &&
-psql -f db/scripts/update_country_names.sql & # update country names
+psql -f $APP_ROOT/db/scripts/update_country_names.sql & # update country names
 shp2pgsql \
     -I -D -s 4269:3857 \
-    db/ingest/cb_2018_us_state_500k/cb_2018_us_state_500k.shp \
+    $APP_ROOT/db/ingest/cb_2018_us_state_500k/cb_2018_us_state_500k.shp \
     regions.us_states \
     | psql &
 shp2pgsql \
     -I -D -s 4269:3857 \
-    db/ingest/cb_2018_us_county_500k/cb_2018_us_county_500k.shp \
+    $APP_ROOT/db/ingest/cb_2018_us_county_500k/cb_2018_us_county_500k.shp \
     regions.us_counties \
     | psql
 
 # Create tables and funcs
-psql -f db/scripts/create.sql &
-psql -f db/scripts/ingest_countries.sql &
-psql -f db/scripts/ingest_us_states.sql &
-psql -f db/scripts/ingest_us_counties.sql &
-python db/scripts/mvt/main.py \
-    db/scripts/mvt/mvt_all.template.sql \
+psql -f $APP_ROOT/db/scripts/create.sql &
+psql -f $APP_ROOT/db/scripts/ingest_countries.sql &
+psql -f $APP_ROOT/db/scripts/ingest_us_states.sql &
+psql -f $APP_ROOT/db/scripts/ingest_us_counties.sql &
+python $APP_ROOT/db/scripts/mvt/main.py \
+    $APP_ROOT/db/scripts/mvt/mvt_all.template.sql \
     | psql &
-python db/scripts/mvt/main.py \
-    db/scripts/mvt/mvt_metric.template.sql \
+python $APP_ROOT/db/scripts/mvt/main.py \
+    $APP_ROOT/db/scripts/mvt/mvt_metric.template.sql \
     | psql
 
 # Ingest jhu
-db/ingest_jhu.sh
+$APP_ROOT/db/ingest_jhu.sh
 
 # Create read-only user
 psql <<-EOSQL
@@ -57,4 +58,4 @@ psql <<-EOSQL
  GRANT SELECT ON ALL TABLES IN SCHEMA jhu TO $API_USER;
 EOSQL
 
-echo "Done"
+echo Finished db init
