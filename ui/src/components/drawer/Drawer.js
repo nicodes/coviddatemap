@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import DatePicker from 'react-datepicker'
 import ReactTooltip from 'react-tooltip';
 import Select from '../select/Select'
@@ -30,10 +31,13 @@ const Drawer = ({
   endDate, setEndDate,
   endDateBool, setEndDateBool, endDateErr,
   setSelectedGids
-}) => <div
-  className='drawer'
-  style={{ transform: drawerOpen ? undefined : 'translatex(-100%)' }}
->
+}) => {
+  const startDateRef = useRef()
+  const endDateRef = useRef()
+  return <div
+    className='drawer'
+    style={{ transform: drawerOpen ? undefined : 'translatex(-100%)' }}
+  >
     <h2>Region:</h2>
     <Select
       options={regionOptions}
@@ -66,8 +70,11 @@ const Drawer = ({
     </div>
 
     <h2>{`${endDateBool ? 'Start ' : ''}Date:`}</h2>
-    <div> {/* need to wrap DatePicker for grid  */}
+    {/* need to wrap DatePicker for grid  */}
+    {/* onClick is to disable mobile keyboard  */}
+    <div onClick={() => startDateRef.current.setBlur()}>
       <DatePicker
+        ref={startDateRef}
         selected={startDate}
         onChange={date => date <= lastUpdate && setStartDate(date)}
       />
@@ -81,8 +88,11 @@ const Drawer = ({
       />
       <h2 style={{ textDecoration: endDateBool ? undefined : 'line-through' }}>End Date:</h2>
     </div>
-    <div className='flex'> {/* need to wrap DatePicker for grid  */}
+    {/* need to wrap DatePicker for grid  */}
+    {/* onClick is to disable mobile keyboard  */}
+    <div className='flex' onClick={() => endDateRef.current.setBlur()}>
       <DatePicker
+        ref={endDateRef}
         selected={endDate}
         onChange={date => date <= lastUpdate && setEndDate(date)}
         disabled={!endDateBool}
@@ -93,4 +103,5 @@ const Drawer = ({
       </>}
     </div>
   </div>
+}
 export default Drawer
