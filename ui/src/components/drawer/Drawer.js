@@ -72,7 +72,7 @@ const Drawer = ({
     <h2>{`${endDateBool ? 'Start ' : ''}Date:`}</h2>
     {/* need to wrap DatePicker for grid  */}
     {/* onClick is to disable mobile keyboard  */}
-    <div onClick={() => startDateRef.current.setBlur()}>
+    <div onClick={() => startDateRef.current && startDateRef.current.setBlur()}>
       <DatePicker
         ref={startDateRef}
         selected={startDate}
@@ -90,7 +90,7 @@ const Drawer = ({
     </div>
     {/* need to wrap DatePicker for grid  */}
     {/* onClick is to disable mobile keyboard  */}
-    <div className='flex' onClick={() => endDateRef.current.setBlur()}>
+    <div className='flex' onClick={() => endDateRef.current && endDateRef.current.setBlur()}>
       <DatePicker
         ref={endDateRef}
         selected={endDate}
