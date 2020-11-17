@@ -21,6 +21,8 @@ const metricOptions = [
   ['Case Fatality Ratio', 'case_fatality_ratio']
 ]
 
+const minDate = new Date('2020-03-23')
+
 const Drawer = ({
   drawerOpen,
   lastUpdate,
@@ -76,7 +78,10 @@ const Drawer = ({
       <DatePicker
         ref={startDateRef}
         selected={startDate}
-        onChange={date => date <= lastUpdate && setStartDate(date)}
+        onChange={date =>
+          minDate <= date
+          && date <= lastUpdate
+          && setStartDate(date)}
       />
     </div>
 
@@ -94,7 +99,10 @@ const Drawer = ({
       <DatePicker
         ref={endDateRef}
         selected={endDate}
-        onChange={date => date <= lastUpdate && setEndDate(date)}
+        onChange={date =>
+          minDate <= date
+          && date <= lastUpdate
+          && setEndDate(date)}
         disabled={!endDateBool}
       />
       {endDateErr && <>
