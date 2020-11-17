@@ -55,4 +55,13 @@ app.get('/mvt/:region/:type/:z/:x/:y', async (req, res) => {
     }
 })
 
+app.get('/last-update', async (req, res) => {
+    try {
+        const { rows } = await pool.query('SELECT last_update()')
+        res.status(200).send(rows[0].last_update)
+    } catch (err) {
+        console.log(err)
+    }
+})
+
 app.listen(port, () => console.log(`api listening at http://0.0.0.0:${port}`))

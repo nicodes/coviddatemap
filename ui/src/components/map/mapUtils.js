@@ -1,11 +1,11 @@
 const apiHost = process.env.REACT_APP_API_HOST
 
-const reqQuery = (metric, buckets, selectedGids, startDate, endDateBool, endDate) =>
+const reqQuery = (metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr) =>
     `?metric=${metric}`
     + `&buckets=${buckets}`
     + `&selected-gids=${selectedGids}`
-    + `&start-date=${startDate.toISOString()}`
-    + `${endDateBool ? `&end-date=${endDate.toISOString()}` : ''}`
+    + `&start-date=${startDate.toLocaleDateString()}`
+    + `${endDateBool && !endDateErr ? `&end-date=${endDate.toLocaleDateString()}` : ''}`
 
 const quintLayerPaint = buckets => {
     const opacity = 0.6 / buckets
@@ -17,7 +17,7 @@ const quintLayerPaint = buckets => {
     return ["case", ...a, 0]
 }
 
-const addSources = (map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate) => {
+const addSources = (map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr) => {
     if (map) {
         map.addSource('region-all', {
             type: 'vector',
@@ -25,7 +25,7 @@ const addSources = (map, region, metric, buckets, selectedGids, startDate, endDa
         })
         map.addSource('region-selected', {
             type: 'vector',
-            tiles: [`${apiHost}/mvt/${region}/quint/{z}/{x}/{y}` + reqQuery(metric, buckets, selectedGids, startDate, endDateBool, endDate)]
+            tiles: [`${apiHost}/mvt/${region}/quint/{z}/{x}/{y}` + reqQuery(metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)]
         })
     }
 }
@@ -42,11 +42,11 @@ const refreshAllSource = (map, region) => {
     }
 }
 
-const refreshQuintSource = (map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate) => {
+const refreshQuintSource = (map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr) => {
     if (map) {
         const source = map.getSource('region-selected')
         if (source) {
-            source.tiles = [`${apiHost}/mvt/${region}/quint/{z}/{x}/{y}` + reqQuery(metric, buckets, selectedGids, startDate, endDateBool, endDate)]
+            source.tiles = [`${apiHost}/mvt/${region}/quint/{z}/{x}/{y}` + reqQuery(metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)]
             map.style.sourceCaches['region-selected'].clearTiles()
             map.style.sourceCaches['region-selected'].update(map.transform)
             map.triggerRepaint()

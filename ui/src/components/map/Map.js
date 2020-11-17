@@ -10,8 +10,7 @@ const Map = ({
     metric,
     buckets,
     startDate,
-    endDate,
-    endDateBool,
+    endDate, endDateBool, endDateErr,
     selectedGids, setSelectedGids
 }) => {
     const mapRef = useRef()
@@ -30,7 +29,7 @@ const Map = ({
         map.addControl(new mapboxgl.NavigationControl(), 'bottom-right') // add navigation control (the +/- zoom buttons)
 
         map.on('load', () => {
-            mapUtils.addSources(map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate)
+            mapUtils.addSources(map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
             mapUtils.addLayers(map, buckets)
         })
 
@@ -52,8 +51,8 @@ const Map = ({
     }, [clickedGidObj])
 
     useEffect(() => {
-        mapUtils.refreshQuintSource(map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate)
-    }, [map, region, metric, buckets, startDate, endDate, endDateBool, selectedGids])
+        mapUtils.refreshQuintSource(map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
+    }, [map, region, metric, buckets, startDate, endDate, endDateBool, endDateErr, selectedGids])
 
     useEffect(() => {
         mapUtils.refreshQuintLayer(map, buckets)

@@ -1,5 +1,7 @@
 import DatePicker from 'react-datepicker'
+import ReactTooltip from 'react-tooltip';
 import Select from '../select/Select'
+import errorSvg from '../../assets/error.svg'
 import './drawer.scss'
 
 const regionOptions = [
@@ -20,18 +22,18 @@ const metricOptions = [
 
 const Drawer = ({
   drawerOpen,
+  lastUpdate,
   region, setRegion,
   metric, setMetric,
   buckets, setBuckets,
   startDate, setStartDate,
   endDate, setEndDate,
-  endDateBool, setEndDateBool,
+  endDateBool, setEndDateBool, endDateErr,
   setSelectedGids
-}) =>
-  <div
-    className='drawer'
-    style={{ transform: drawerOpen ? undefined : 'translatex(-100%)' }}
-  >
+}) => <div
+  className='drawer'
+  style={{ transform: drawerOpen ? undefined : 'translatex(-100%)' }}
+>
     <h2>Region:</h2>
     <Select
       options={regionOptions}
@@ -67,7 +69,7 @@ const Drawer = ({
     <div> {/* need to wrap DatePicker for grid  */}
       <DatePicker
         selected={startDate}
-        onChange={date => setStartDate(date)}
+        onChange={date => date <= lastUpdate && setStartDate(date)}
       />
     </div>
 
@@ -79,13 +81,16 @@ const Drawer = ({
       />
       <h2 style={{ textDecoration: endDateBool ? undefined : 'line-through' }}>End Date:</h2>
     </div>
-    <div> {/* need to wrap DatePicker for grid  */}
+    <div className='flex'> {/* need to wrap DatePicker for grid  */}
       <DatePicker
         selected={endDate}
-        onChange={date => setEndDate(date)}
+        onChange={date => date <= lastUpdate && setEndDate(date)}
         disabled={!endDateBool}
       />
+      {endDateErr && <>
+        <img className='error' src={errorSvg} data-tip data-for="end-date" />
+        <ReactTooltip id="end-date" place="right">End Date must be after Start Date</ReactTooltip>
+      </>}
     </div>
   </div>
-
 export default Drawer
