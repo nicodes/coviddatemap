@@ -86,7 +86,7 @@ const Drawer = ({
         checked={endDateBool}
         onChange={() => setEndDateBool(!endDateBool)}
       />
-      <h2 style={{ textDecoration: endDateBool ? undefined : 'line-through' }}>End Date:</h2>
+      <h2 style={{ textDecoration: endDateBool && !endDateErr ? undefined : 'line-through' }}>End Date:</h2>
     </div>
     {/* need to wrap DatePicker for grid  */}
     {/* onClick is to disable mobile keyboard  */}
