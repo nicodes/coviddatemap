@@ -28,6 +28,14 @@ const App = () => {
     })()
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      const res = await fetch(`${apiHost}/all-gids/${region}`)
+      const json = await res.json()
+      setSelectedGids(json)
+    })()
+  }, [region])
+
   return lastUpdate && startDate && endDate ? <main>
     <Map
       region={region}

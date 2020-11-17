@@ -20,8 +20,9 @@ const sanitizeDate = s => {
 }
 
 app.get('/mvt/:region/:type/:z/:x/:y', async (req, res) => {
-    const { region, z, x, y } = req.params
+    const region = req.params.region.replace('-', '_')
     const type = req.params.type.replace('-', '_')
+    const { z, x, y } = req.params
 
     if (type === 'quint') {
         const { metric, buckets } = req.query
@@ -59,6 +60,16 @@ app.get('/last-update', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT last_update()')
         res.status(200).send(rows[0].last_update)
+    } catch (err) {
+        console.log(err)
+    }
+})
+
+app.get('/all-gids/:region', async (req, res) => {
+    const region = req.params.region.replace('-', '_')
+    try {
+        const { rows } = await pool.query(`SELECT DISTINCT(gid) FROM regions.${region}`)
+        res.status(200).send(rows.map(({ gid }) => gid))
     } catch (err) {
         console.log(err)
     }
