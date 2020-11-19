@@ -33,18 +33,24 @@ shp2pgsql \
     $APP_ROOT/db/ingest/cb_2018_us_county_500k/cb_2018_us_county_500k.shp \
     regions.us_counties \
     | psql
+wait
 
 # Create tables and funcs
 psql -f $APP_ROOT/db/scripts/create.sql &
 psql -f $APP_ROOT/db/scripts/ingest_countries.sql &
 psql -f $APP_ROOT/db/scripts/ingest_us_states.sql &
 psql -f $APP_ROOT/db/scripts/ingest_us_counties.sql &
+psql -f $APP_ROOT/db/scripts/last-update.sql &
 python $APP_ROOT/db/scripts/mvt/main.py \
     $APP_ROOT/db/scripts/mvt/mvt_all.template.sql \
     | psql &
 python $APP_ROOT/db/scripts/mvt/main.py \
     $APP_ROOT/db/scripts/mvt/mvt_metric.template.sql \
+    | psql &
+python $APP_ROOT/db/scripts/mvt/main.py \
+    $APP_ROOT/db/scripts/mvt/mvt_metric_per.template.sql \
     | psql
+wait
 
 # Ingest jhu
 $APP_ROOT/db/ingest_jhu.sh

@@ -27,8 +27,9 @@ while [ $start -le $(date +%Y%m%d) ]; do
 done
 
 echo Starting ingest...
-psql -c "SELECT ingest_countries()"
-psql -c "SELECT ingest_us_states()"
+psql -c "SELECT ingest_countries()" &
+psql -c "SELECT ingest_us_states()" &
 psql -c "SELECT ingest_us_counties()"
+wait
 
 echo Finished ingest_jhu at $(date)

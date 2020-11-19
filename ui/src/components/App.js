@@ -10,6 +10,8 @@ const App = () => {
   const [lastUpdate, setLastUpdate] = useState()
   const [region, setRegion] = useState('countries')
   const [metric, setMetric] = useState('new_confirmed')
+  const [metric2, setMetric2] = useState('')
+  const [metric2Bool, setMetric2Bool] = useState(false)
   const [buckets, setBuckets] = useState(3)
   const [startDate, setStartDate] = useState()
   const [endDate, setEndDate] = useState()
@@ -40,6 +42,8 @@ const App = () => {
     <Map
       region={region}
       metric={metric}
+      metric2={metric2}
+      metric2Bool={metric2Bool}
       buckets={buckets}
       startDate={startDate}
       endDate={endDate}
@@ -52,6 +56,8 @@ const App = () => {
       lastUpdate={lastUpdate}
       region={region} setRegion={setRegion}
       metric={metric} setMetric={setMetric}
+      metric2={metric2} setMetric2={setMetric2}
+      metric2Bool={metric2Bool} setMetric2Bool={setMetric2Bool}
       buckets={buckets} setBuckets={setBuckets}
       startDate={startDate} setStartDate={setStartDate}
       endDate={endDate} setEndDate={setEndDate}

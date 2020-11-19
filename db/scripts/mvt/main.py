@@ -1,9 +1,9 @@
-# python main.py mvt_metric.template.sql > mvt_metric.sql
+# python main.py mvt_metric_per.template.sql > mvt_metric_per.sql
 
 import sys
 
 regions = ['countries', 'us_states', 'us_counties']
-col_names = [
+metrics = [
     'new_confirmed',
     'total_confirmed',
     'new_deaths',
@@ -16,7 +16,16 @@ col_names = [
 
 f = open(sys.argv[1], "r")
 s = f.read()
- 
-for r in regions:
-    for c in col_names:
-        print(s.replace('!REGION!', r).replace('!COLNAME!', c))
+fname = sys.argv[1].split('/')[-1]
+
+if fname == 'mvt_metric_per.template.sql' :
+    for r in regions:
+        for m1 in metrics:
+            for m2 in metrics:
+                if m1 != m2:
+                    print(s.replace('!REGION!', r).replace('!METRIC_1!', m1).replace('!METRIC_2!', m2))
+
+else:
+    for r in regions:
+        for m in metrics:
+            print(s.replace('!REGION!', r).replace('!METRIC!', m))

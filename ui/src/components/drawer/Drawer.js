@@ -17,7 +17,8 @@ const metricOptions = [
   ['New Deaths', 'new_deaths'],
   ['Total Deaths', 'total_deaths'],
   ['New Active Cases', 'new_active'],
-  ['Incidence Rate', 'total_active'],
+  ['Total Active Cases', 'total_active'],
+  ['Incidence Rate', 'incidence_rate'],
   ['Case Fatality Ratio', 'case_fatality_ratio']
 ]
 
@@ -28,6 +29,8 @@ const Drawer = ({
   lastUpdate,
   region, setRegion,
   metric, setMetric,
+  metric2, setMetric2,
+  metric2Bool, setMetric2Bool,
   buckets, setBuckets,
   startDate, setStartDate,
   endDate, setEndDate,
@@ -56,8 +59,39 @@ const Drawer = ({
       value={metric}
       onChange={value => {
         setMetric(value)
+        if (value == metric2) {
+          setMetric2('')
+          setMetric2Bool(false)
+        }
       }}
     />
+
+    <div className='flex'>
+      <input
+        type='checkbox'
+        checked={metric2Bool}
+        onChange={() => setMetric2Bool(!metric2Bool)}
+      />
+      <h2>Ratio:</h2>
+    </div>
+    <div className='flex'>
+      <Select
+        disabled={!metric2Bool}
+        options={metricOptions.filter(([l, v]) =>
+          v != metric
+          && v != 'incidence_rate'
+          && v != 'case_fatality_ratio'
+        )}
+        value={metric2}
+        onChange={value => {
+          setMetric2(value)
+        }}
+      />
+      {metric2Bool && metric2 == '' && <>
+        <img className='error' src={errorSvg} data-tip data-for="metric2" />
+        <ReactTooltip id="metric2" place="right">Please select a second metric</ReactTooltip>
+      </>}
+    </div>
 
     <h2>Granularity:</h2>
     <div className='flex'>

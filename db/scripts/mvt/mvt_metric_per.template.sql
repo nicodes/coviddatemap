@@ -1,5 +1,5 @@
--- !METRIC!: 1 date
-CREATE OR REPLACE FUNCTION mvt_!REGION!_!METRIC!(
+-- !METRIC_1!, !METRIC_2!: 1 date
+CREATE OR REPLACE FUNCTION mvt_!REGION!_!METRIC_1!_per_!METRIC_2!(
     z integer,
     x integer, 
     y integer,
@@ -13,7 +13,7 @@ BEGIN
     RETURN (
 		WITH mvtgeom AS (
 			WITH t AS (
-				SELECT j.fk, NTILE(b) OVER (ORDER BY j.!METRIC!) quint
+				SELECT j.fk, NTILE(b) OVER (ORDER BY j.!METRIC_1! / NULLIF(j.!METRIC_2!, 0)) quint
 				FROM jhu.!REGION! j
 				WHERE j.fk = ANY(gids) AND j.date = d
 			)
@@ -26,8 +26,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- !METRIC!: 2 date
-CREATE OR REPLACE FUNCTION mvt_!REGION!_!METRIC!(
+-- !METRIC_1!, !METRIC_2!: 2 date
+CREATE OR REPLACE FUNCTION mvt_!REGION!_!METRIC_1!_per_!METRIC_2!(
     z integer,
     x integer, 
     y integer,
@@ -42,7 +42,7 @@ BEGIN
     RETURN (
 		WITH mvtgeom AS (
 			WITH t AS (
-				SELECT j1.fk, NTILE(b) OVER (ORDER BY j1.!METRIC! - j2.!METRIC!) quint
+				SELECT j1.fk, NTILE(b) OVER (ORDER BY j1.!METRIC_1! / NULLIF(j1.!METRIC_2!, 0) - j2.!METRIC_1! / NULLIF(j2.!METRIC_2!, 0)) quint
 				FROM jhu.!REGION! j1
 				JOIN jhu.!REGION! j2 ON j1.fk = j2.fk
 				WHERE j1.fk = ANY(gids) AND j1.date = d1 AND j2.date = d2

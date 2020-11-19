@@ -8,6 +8,7 @@ mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
 const Map = ({
     region,
     metric,
+    metric2, metric2Bool,
     buckets,
     startDate,
     endDate, endDateBool, endDateErr,
@@ -29,7 +30,7 @@ const Map = ({
         map.addControl(new mapboxgl.NavigationControl(), 'bottom-right') // add navigation control (the +/- zoom buttons)
 
         map.on('load', () => {
-            mapUtils.addSources(map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
+            mapUtils.addSources(map, region, metric, metric2, metric2Bool, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
             mapUtils.addLayers(map, buckets)
         })
 
@@ -51,8 +52,8 @@ const Map = ({
     }, [clickedGidObj])
 
     useEffect(() => {
-        mapUtils.refreshQuintSource(map, region, metric, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
-    }, [map, region, metric, buckets, startDate, endDate, endDateBool, endDateErr, selectedGids])
+        mapUtils.refreshQuintSource(map, region, metric, metric2, metric2Bool, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
+    }, [map, region, metric, metric2, metric2Bool, buckets, startDate, endDate, endDateBool, endDateErr, selectedGids])
 
     useEffect(() => {
         mapUtils.refreshQuintLayer(map, buckets)
