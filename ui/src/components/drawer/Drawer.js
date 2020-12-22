@@ -12,14 +12,17 @@ const regionOptions = [
 ]
 
 const metricOptions = [
-  ['New Confirmed Cases', 'new_confirmed'],
+  ['New Confirmed Cases', 'confirmed'],
   ['Total Confirmed Cases', 'total_confirmed'],
-  ['New Deaths', 'new_deaths'],
+  ['New Deaths', 'deaths'],
   ['Total Deaths', 'total_deaths'],
-  ['New Active Cases', 'new_active'],
+  ['New Active Cases', 'active'],
   ['Total Active Cases', 'total_active'],
   ['Incidence Rate', 'incidence_rate'],
-  ['Case Fatality Ratio', 'case_fatality_ratio']
+  ['Case Fatality Ratio', 'case_fatality_ratio'],
+  ['Total Population', 'population'],
+  ['Female Population', 'population_female'],
+  ['Male Population', 'population_male']
 ]
 
 const minDate = new Date('2020-03-23')

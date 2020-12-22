@@ -52,11 +52,11 @@ const Map = ({
     }, [clickedGidObj])
 
     useEffect(() => {
-        mapUtils.refreshQuintSource(map, region, metric, metric2, metric2Bool, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
+        mapUtils.refreshNtileSource(map, region, metric, metric2, metric2Bool, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr)
     }, [map, region, metric, metric2, metric2Bool, buckets, startDate, endDate, endDateBool, endDateErr, selectedGids])
 
     useEffect(() => {
-        mapUtils.refreshQuintLayer(map, buckets)
+        mapUtils.refreshNtileLayer(map, buckets)
     }, [map, buckets])
 
     useEffect(() => {

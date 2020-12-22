@@ -24,7 +24,7 @@ app.get('/mvt/:region/:type/:z/:x/:y', async (req, res) => {
     const type = req.params.type.replace('-', '_')
     const { z, x, y } = req.params
 
-    if (type === 'quint') {
+    if (type === 'ntile') {
         const { metric, buckets } = req.query
         const metric2 = req.query['metric-2']
         const selectedGids = req.query['selected-gids']
@@ -32,7 +32,7 @@ app.get('/mvt/:region/:type/:z/:x/:y', async (req, res) => {
         const endDate = sanitizeDate(req.query['end-date'])
 
         const q = `SELECT mvt_${region}_${metric}`
-            + (metric2 ? `_per_${metric2}` : '')
+            + (metric2 ? `_${metric2}` : '')
             + `(`
             + `${z},${x},${y}`
             + `,${buckets}`

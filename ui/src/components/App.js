@@ -9,7 +9,7 @@ const App = () => {
   const [drawerOpen, setDrawerOpen] = useState(true)
   const [lastUpdate, setLastUpdate] = useState()
   const [region, setRegion] = useState('countries')
-  const [metric, setMetric] = useState('new_confirmed')
+  const [metric, setMetric] = useState('confirmed')
   const [metric2, setMetric2] = useState('')
   const [metric2Bool, setMetric2Bool] = useState(false)
   const [buckets, setBuckets] = useState(3)
