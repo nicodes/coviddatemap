@@ -3,15 +3,14 @@ services:
  db:
   image: postgis/postgis:13-master
   environment:
-   - POSTGRES_USER
-   - POSTGRES_PASSWORD
-   - API_USER
-   - API_PASSWORD
+   - POSTGRES_USER=$ADMIN_USER
+   - POSTGRES_PASSWORD=$ADMIN_USER_PWD
+   - API_USER=$API_USER
+   - API_USER_PWD=$API_USER_PWD
   ports:
    - $DB_PORT:$DB_PORT
   volumes:
    - ./db/data:/var/lib/postgresql/data
-  #  - ./db/init.sh:/docker-entrypoint-initdb.d/init.sh
   restart: always
   command: -p $DB_PORT
  api:
@@ -19,13 +18,13 @@ services:
    - db
   build: ./api
   environment:
-   - NODE_ENV
+   - NODE_ENV=$ENV
    - PORT=$API_PORT
-   - PGHOST
-   - PGPORT
-   - PGDATABASE
-   - PGUSER
-   - PGPASSWORD
+   - PGHOST=db
+   - PGPORT=$DB_PORT
+   - PGDATABASE=$DB_NAME
+   - PGUSER=$API_USER
+   - PGPASSWORD=$API_USER_PWD
   ports:
    - $API_PORT:$API_PORT
   volumes:
@@ -34,7 +33,7 @@ services:
  ui:
   build: ./ui
   environment:
-   - NODE_ENV
+   - NODE_ENV=$ENV
    - PORT=$UI_PORT
    - REACT_APP_API_HOST
    - REACT_APP_MAPBOX_ACCESS_TOKEN

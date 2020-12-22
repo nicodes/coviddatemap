@@ -5,6 +5,10 @@ WARNING! This project is curently in development and should only be used for tes
 Covid Data: 
 * https://github.com/CSSEGISandData/COVID-19
 
+Population Data:
+* World population: https://population.un.org/wpp/Download/Standard/CSV/
+* US population: https://www.census.gov/data/tables/time-series/demo/popest/2010s-counties-detail.html
+
 Geopolitical Bounderies
 * World: https://hub.arcgis.com/datasets/esri::world-countries-generalized?geometry=-128.219%2C-76.573%2C164.281%2C76.786
 * United States: https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html
