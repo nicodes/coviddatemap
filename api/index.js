@@ -91,7 +91,7 @@ app.get('/popup/:region/:gid', async (req, res) => {
         try {
             const { rows } = await pool.query(s)
             v = (rows[1].m1 / rows[1].m2) - (rows[0].m1 / rows[0].m2)
-            return res.status(200).send(v)
+            return res.status(200).send({ value: v })
         } catch (err) {
             console.log(err)
         }

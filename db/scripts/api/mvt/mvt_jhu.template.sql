@@ -17,7 +17,7 @@ BEGIN
 				FROM jhu.!REGION! j
 				WHERE j.fk = ANY(gids) AND j.date = d
 			)
-			SELECT t.ntile, ST_AsMVTGeom(r.geom, te) geom
+			SELECT r.gid, t.ntile, ST_AsMVTGeom(r.geom, te) geom
 			FROM regions.!REGION! r
 			LEFT JOIN t ON r.gid = t.fk
 			WHERE r.gid = ANY(gids) AND ST_Intersects(r.geom, te)
@@ -47,7 +47,7 @@ BEGIN
 				JOIN jhu.!REGION! j2 ON j1.fk = j2.fk
 				WHERE j1.fk = ANY(gids) AND j1.date = d1 AND j2.date = d2
 			)
-			SELECT t.ntile, ST_AsMVTGeom(r.geom, te) geom
+			SELECT r.gid, t.ntile, ST_AsMVTGeom(r.geom, te) geom
 			FROM regions.!REGION! r
 			JOIN t ON r.gid = t.fk
 			WHERE r.gid = ANY(gids) AND ST_Intersects(r.geom, te)
