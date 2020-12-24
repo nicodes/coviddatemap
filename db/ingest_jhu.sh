@@ -44,8 +44,9 @@ done
 
 echo Ingesting JHU data from $start_date...
 psql <<-EOSQL
+    UPDATE staging.jhu SET fips5 = fips WHERE '$start_date' <= date AND LENGTH(fips) = 5;
     UPDATE staging.jhu SET fips5 = CONCAT('0', fips) WHERE '$start_date' <= date AND LENGTH(fips) = 4;
-    UPDATE staging.jhu SET fips5 = fips, fips2 = LEFT(fips, 2) WHERE '$start_date' <= date AND LENGTH(fips) = 5;
+    UPDATE staging.jhu SET fips2 = LEFT(fips5, 2) WHERE '$start_date' <= date;
     ANALYZE staging.jhu;
 
     SELECT ingest_us_states('$start_date');

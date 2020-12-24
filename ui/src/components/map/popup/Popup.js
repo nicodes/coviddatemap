@@ -17,7 +17,11 @@ const Popup = ({ region, metric1, metric2, startDate, endDate, gid }) => {
     return <div style={{ backgroundColor: 'white', padding: 10, marginBottom: 5 }}>
         <div>name, flag</div>
         <div>{gid}</div>
-        {value && <div>{value % 1 == 0 ? value.toLocaleString() : `${Number(value * 100).toFixed(4)}%`}</div>}
+        {value && <div>{
+            value % 1 == 0
+                ? value.toLocaleString()
+                : `${Number(value).toFixed(4)}%`
+        }</div>}
     </div>
 }
 

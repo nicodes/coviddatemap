@@ -18,7 +18,6 @@ const Map = ({
 }) => {
     const mapRef = useRef()
     const [map, setMap] = useState()
-    const [renderedPopup, renderPopup] = useState({})
     const [hoverGid, setHoverGid] = useState()
     const [clickedGidObj, setClickedGidObj] = useState({}) // use object to allow multiple clicks of same gid
 
@@ -46,15 +45,14 @@ const Map = ({
         const p = new mapboxgl.Popup({ closeButton: false }).setHTML('<div></div>')
 
         map.on('mouseenter', 'region-all', e => {
-            const { gid } = e.features[0].properties
-            if (selectedGids.includes(gid)) {
-                p.addTo(map)
-                p.trackPointer()
-                renderPopup({})
-            }
+            p.addTo(map)
+            p.trackPointer()
         })
 
-        map.on('mouseleave', 'region-all', () => p.remove());
+        map.on('mouseleave', 'region-all', () => {
+            p.remove()
+            setHoverGid(null)
+        });
 
         map.on('mousemove', 'region-all', e => {
             const { gid } = e.features[0].properties
@@ -78,7 +76,7 @@ const Map = ({
                 a[a.length - 1]
             )
         }
-    }, [renderedPopup, hoverGid])
+    }, [hoverGid])
 
     useEffect(() => {
         const { gid } = clickedGidObj
