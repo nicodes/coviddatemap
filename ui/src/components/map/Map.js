@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
+import { render } from 'react-dom'
 import mapboxgl from 'mapbox-gl'
 import mapUtils from './mapUtils'
+import Popup from './popup/Popup'
 import './map.scss'
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
@@ -16,6 +18,8 @@ const Map = ({
 }) => {
     const mapRef = useRef()
     const [map, setMap] = useState()
+    const [renderedPopup, renderPopup] = useState({})
+    const [hoverGid, setHoverGid] = useState()
     const [clickedGidObj, setClickedGidObj] = useState({}) // use object to allow multiple clicks of same gid
 
     useEffect(() => {
@@ -39,8 +43,42 @@ const Map = ({
             setClickedGidObj({ gid }) // wrap in obj to force rerender (so you can toggle same country many times)
         })
 
+        const p = new mapboxgl.Popup({ closeButton: false }).setHTML('<div></div>')
+
+        map.on('mouseenter', 'region-all', e => {
+            const { gid } = e.features[0].properties
+            if (selectedGids.includes(gid)) {
+                p.addTo(map)
+                p.trackPointer()
+                renderPopup({})
+            }
+        })
+
+        map.on('mouseleave', 'region-all', () => p.remove());
+
+        map.on('mousemove', 'region-all', e => {
+            const { gid } = e.features[0].properties
+            gid !== hoverGid && setHoverGid(gid)
+        })
+
         return () => map.remove()
     }, [])
+
+    // inject Popup component
+    useEffect(() => {
+        if (hoverGid !== null) {
+            const a = document.getElementsByClassName('mapboxgl-popup')
+            a.length !== 0 && render(
+                <Popup region={region}
+                    metric1={metric}
+                    metric2={metric2Bool ? metric2 : undefined}
+                    startDate={startDate}
+                    endDate={endDateBool ? endDate : undefined}
+                    gid={hoverGid} />,
+                a[a.length - 1]
+            )
+        }
+    }, [renderedPopup, hoverGid])
 
     useEffect(() => {
         const { gid } = clickedGidObj

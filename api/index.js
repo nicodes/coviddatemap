@@ -48,6 +48,7 @@ app.get('/mvt/:region/:type/:z/:x/:y', async (req, res) => {
         }
     }
 
+    // TODO break if else into 2 endpoints
     else if (type === 'all') {
         const q = `SELECT mvt_${region}_all(${z},${x},${y}) AS mvt`
         try {
@@ -68,6 +69,7 @@ app.get('/last-update', async (req, res) => {
     }
 })
 
+// tod change to /:region/all
 app.get('/all-gids/:region', async (req, res) => {
     const region = req.params.region.replace('-', '_')
     try {
@@ -76,6 +78,59 @@ app.get('/all-gids/:region', async (req, res) => {
     } catch (err) {
         console.log(err)
     }
+})
+
+app.get('/popup/:region/:gid', async (req, res) => {
+    const { region, gid } = req.params
+    const { metric1, metric2 } = req.query
+    const startDate = sanitizeDate(req.query['start-date'])
+    const endDate = sanitizeDate(req.query['end-date'])
+
+    if (metric2 && endDate) {
+        const s = `SELECT ${metric1} m1, ${metric2} m2 FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND (j.date = '${startDate}' OR j.date = '${endDate}') ORDER BY j.date`
+        try {
+            const { rows } = await pool.query(s)
+            v = (rows[1].m1 / rows[1].m2) - (rows[0].m1 / rows[0].m2)
+            return res.status(200).send(v)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    if (metric2) {
+        const s = `SELECT ${metric1} m1, ${metric2} m2 FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND j.date = '${startDate}'`
+        try {
+            const { rows } = await pool.query(s)
+            v = rows[0].m1 / rows[0].m2
+            return res.status(200).send({ value: v })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    if (endDate) {
+        s = `SELECT ${metric1} m FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND (j.date = '${startDate}' OR j.date = '${endDate}') ORDER BY j.date`
+        try {
+            const { rows } = await pool.query(s)
+            const v = rows[1].m - rows[0].m
+            return res.status(200).send({ value: v })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    else {
+        s = `SELECT ${metric1} m FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND j.date = '${startDate}'`
+        try {
+            const { rows } = await pool.query(s)
+            if (rows.length !== 0)
+                return res.status(200).send({ value: rows[0].m })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return
 })
 
 app.listen(port, () => console.log(`api listening at http://0.0.0.0:${port}`))
