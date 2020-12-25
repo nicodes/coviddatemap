@@ -21,6 +21,21 @@ const Map = ({
     const [hoverGid, setHoverGid] = useState()
     const [clickedGidObj, setClickedGidObj] = useState({}) // use object to allow multiple clicks of same gid
 
+    const renderPopup = () => {
+        if (hoverGid !== null) {
+            const a = document.getElementsByClassName('mapboxgl-popup')
+            a.length !== 0 && render(
+                <Popup region={region}
+                    metric1={metric}
+                    metric2={metric2Bool ? metric2 : undefined}
+                    startDate={startDate}
+                    endDate={endDateBool ? endDate : undefined}
+                    gid={hoverGid} />,
+                a[a.length - 1]
+            )
+        }
+    }
+
     useEffect(() => {
         const map = new mapboxgl.Map({
             container: mapRef.current,
@@ -42,7 +57,7 @@ const Map = ({
             setClickedGidObj({ gid }) // wrap in obj to force rerender (so you can toggle same country many times)
         })
 
-        const p = new mapboxgl.Popup({ closeButton: false }).setHTML('<div></div>')
+        const p = new mapboxgl.Popup({ closeOnClick: false, closeButton: false }).setHTML('<div></div>')
 
         map.on('mouseenter', 'region-all', e => {
             p.addTo(map)
@@ -57,6 +72,10 @@ const Map = ({
         map.on('mousemove', 'region-all', e => {
             const { gid } = e.features[0].properties
             gid !== hoverGid && setHoverGid(gid)
+            if (document.getElementsByClassName('mapboxgl-popup') == undefined) {
+                p.addTo(map)
+                p.trackPointer()
+            }
         })
 
         return () => map.remove()
@@ -64,18 +83,7 @@ const Map = ({
 
     // inject Popup component
     useEffect(() => {
-        if (hoverGid !== null) {
-            const a = document.getElementsByClassName('mapboxgl-popup')
-            a.length !== 0 && render(
-                <Popup region={region}
-                    metric1={metric}
-                    metric2={metric2Bool ? metric2 : undefined}
-                    startDate={startDate}
-                    endDate={endDateBool ? endDate : undefined}
-                    gid={hoverGid} />,
-                a[a.length - 1]
-            )
-        }
+        renderPopup()
     }, [hoverGid])
 
     useEffect(() => {

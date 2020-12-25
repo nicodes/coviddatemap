@@ -87,50 +87,63 @@ app.get('/popup/:region/:gid', async (req, res) => {
     const endDate = sanitizeDate(req.query['end-date'])
 
     if (metric2 && endDate) {
-        const s = `SELECT ${metric1} m1, ${metric2} m2 FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND (j.date = '${startDate}' OR j.date = '${endDate}') ORDER BY j.date`
+        const s = `SELECT name, ${metric1} m1, ${metric2} m2 FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND (j.date = '${startDate}' OR j.date = '${endDate}') ORDER BY j.date`
         try {
             const { rows } = await pool.query(s)
-            v = (rows[1].m1 / rows[1].m2) - (rows[0].m1 / rows[0].m2)
-            return res.status(200).send({ value: v })
+            if (rows.length !== 0) {
+                const v = (rows[1].m1 / rows[1].m2) - (rows[0].m1 / rows[0].m2)
+                return res.status(200).send({ name: rows[0].name, value: v })
+            }
         } catch (err) {
             console.log(err)
         }
     }
 
-    if (metric2) {
-        const s = `SELECT ${metric1} m1, ${metric2} m2 FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND j.date = '${startDate}'`
+    else if (metric2) {
+        const s = `SELECT name, ${metric1} m1, ${metric2} m2 FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND j.date = '${startDate}'`
         try {
             const { rows } = await pool.query(s)
-            v = rows[0].m1 / rows[0].m2
-            return res.status(200).send({ value: v })
+            if (rows.length !== 0) {
+                const v = rows[0].m1 / rows[0].m2
+                return res.status(200).send({ name: rows[0].name, value: v })
+            }
         } catch (err) {
             console.log(err)
         }
     }
 
-    if (endDate) {
-        s = `SELECT ${metric1} m FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND (j.date = '${startDate}' OR j.date = '${endDate}') ORDER BY j.date`
+    else if (endDate) {
+        const s = `SELECT name, ${metric1} m FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND (j.date = '${startDate}' OR j.date = '${endDate}') ORDER BY j.date`
         try {
             const { rows } = await pool.query(s)
-            const v = rows[1].m - rows[0].m
-            return res.status(200).send({ value: v })
+            if (rows.length !== 0) {
+                const v = rows[1].m - rows[0].m
+                return res.status(200).send({ name: rows[0].name, value: v })
+            }
         } catch (err) {
             console.log(err)
         }
     }
 
     else {
-        s = `SELECT ${metric1} m FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND j.date = '${startDate}'`
+        const s = `SELECT name, ${metric1} m FROM jhu.${region} j JOIN regions.${region} r ON j.fk = r.gid WHERE j.fk = ${gid} AND j.date = '${startDate}'`
         try {
             const { rows } = await pool.query(s)
-            if (rows.length !== 0)
-                return res.status(200).send({ value: rows[0].m })
+            if (rows.length !== 0) {
+                const v = rows[0].m
+                return res.status(200).send({ name: rows[0].name, value: v })
+            }
         } catch (err) {
             console.log(err)
         }
     }
 
-    return
+    return res.status(404)
+})
+
+app.get('/:region/:gid/flag', async (req, res) => {
+    const { region, gid } = req.params
+    res.sendFile(`${__dirname}/flags-svg/${region}/${gid}.svg`)
 })
 
 app.listen(port, () => console.log(`api listening at http://0.0.0.0:${port}`))
