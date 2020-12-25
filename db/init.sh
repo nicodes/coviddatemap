@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# docker run --env-file .env --rm $(docker build -q ./db)
+# docker run --env-file .env --rm $(docker build -q -f db/Dockerfile.init ./db)
 
 export PGHOST=host.docker.internal
 export PGPORT=$DB_PORT

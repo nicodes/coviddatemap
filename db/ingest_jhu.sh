@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# sh -ac '. .env && db/ingest_jhu.sh'
-# 0 * * * * $(sh -ac '. ~/coviddatemap/.env.prod && ~/coviddatemap/db/ingest_jhu.sh' >> ~/coviddatemap/cron.log)
+# docker build -f db/Dockerfile.ingest_jhu -t ingest_jhu db
+# docker run --env-file .env ingest_jhu
+# 0 * * * * docker run --env-file ~/coviddatemap/.env.prod ingest_jhu
 
 export PGHOST=host.docker.internal # todo make configurable
 export PGPORT=$DB_PORT

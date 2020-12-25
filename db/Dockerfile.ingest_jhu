@@ -1,0 +1,12 @@
+FROM python:3
+WORKDIR /app
+
+RUN apt-get upgrade -y \
+    && apt-get update -y \
+    && apt-get install -y postgresql postgis
+
+RUN pip install --no-cache-dir pandas
+
+COPY ingest_jhu.sh parse_jhu.py .
+
+CMD ./ingest_jhu.sh
