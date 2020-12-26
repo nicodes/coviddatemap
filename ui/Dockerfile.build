@@ -1,0 +1,7 @@
+# docker run --env-file .env.prod -v $(pwd)/ui/build:/app/build --rm $(docker build -q -f ui/Dockerfile.build ./ui)
+
+FROM node:14.14-alpine
+WORKDIR /app
+COPY . .
+RUN npm i --production
+CMD npm run build

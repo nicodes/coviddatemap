@@ -3,8 +3,8 @@ services:
  db:
   image: postgis/postgis:13-master
   environment:
-   - POSTGRES_USER
-   - POSTGRES_PASSWORD
+   - POSTGRES_USER=$ADMIN_USER
+   - POSTGRES_PASSWORD=$ADMIN_USER_PWD
   ports:
    - $DB_PORT:$DB_PORT
   volumes:
@@ -16,13 +16,13 @@ services:
    - db
   build: ./api
   environment:
-   - NODE_ENV
+   - NODE_ENV=$ENV
    - PORT=$API_PORT
-   - PGHOST
-   - PGPORT
-   - PGDATABASE
-   - PGUSER
-   - PGPASSWORD
+   - PGHOST=db
+   - PGPORT=$DB_PORT
+   - PGDATABASE=$DB_NAME
+   - PGUSER=$API_USER
+   - PGPASSWORD=$API_USER_PWD
   ports:
    - $API_PORT:$API_PORT
   volumes:
@@ -31,7 +31,8 @@ services:
  ui:
   image: nginx
   environment:
-   - NODE_ENV
+   - NODE_ENV=$ENV
+   - PORT=$UI_PORT
    - REACT_APP_API_HOST
    - REACT_APP_MAPBOX_ACCESS_TOKEN
   ports:
