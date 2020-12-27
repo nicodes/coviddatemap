@@ -19,6 +19,12 @@ const App = () => {
   const [selectedGids, setSelectedGids] = useState([])
   const endDateErr = endDateBool && endDate <= startDate
 
+  const selectAll = async () => {
+    const res = await fetch(`${apiHost}/all-gids/${region}`)
+    const json = await res.json()
+    setSelectedGids(json)
+  }
+
   useEffect(() => {
     (async () => {
       const res = await fetch(`${apiHost}/last-update`)
@@ -31,11 +37,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    (async () => {
-      const res = await fetch(`${apiHost}/all-gids/${region}`)
-      const json = await res.json()
-      setSelectedGids(json)
-    })()
+    selectAll()
   }, [region])
 
   return lastUpdate && startDate && endDate ? <main>
@@ -63,7 +65,8 @@ const App = () => {
       endDate={endDate} setEndDate={setEndDate}
       endDateBool={endDateBool} setEndDateBool={setEndDateBool}
       endDateErr={endDateErr}
-      setSelectedGids={setSelectedGids}
+      selectedGids={selectedGids} setSelectedGids={setSelectedGids}
+      selectAll={selectAll}
     />
     <Header drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
   </main> : <div>loading...</div>

@@ -1,0 +1,82 @@
+.drawer {
+    position: absolute;
+    width: min-content;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: 20px;
+    grid-row-gap: 10px;
+
+    transition-duration: 0.5s;
+    background-color: white;
+    padding: 50px 10px 10px 10px; // set top to match header
+    border-right: 2px solid grey;
+    border-bottom: 2px solid grey;
+    border-bottom-right-radius: 5px;
+        
+    h2, h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+    h2 {
+        font-size: 1em;
+    }
+    h3 {
+        font-size: 0.8em;
+    }
+
+    input[type='checkbox'] { 
+        margin-left: 0;
+        margin-right: 5px;
+    }
+    input[type='range'] {
+        margin-right: 5px;
+    }
+}  
+
+.flex {
+    display: flex;
+}
+
+.error {
+    height: 1.4em;
+    margin-left: 5px;
+}
+
+.srheader {
+    background-color: transparent;
+    border: none;
+    font-size: 1em;
+    white-space: nowrap;
+    font-weight: bold;
+
+    img {
+        width: 1em;
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: 5px;
+    }
+}
+
+.subregions {
+    button {
+        background-color: transparent;
+        border: none;
+        padding: 1;
+
+        img {
+            width: 1.5em;
+        }
+    }
+}
+
+.selectall {
+    button {
+        background-color: transparent;
+        border: 2px solid black;
+        border-radius: 5px;
+        font-size: 1em;
+        white-space: nowrap;
+    }
+}

@@ -80,6 +80,37 @@ app.get('/all-gids/:region', async (req, res) => {
     }
 })
 
+const subRegions = {
+    countries: {
+        'north-america': "'CA', 'US', 'GL', 'MX', 'BZ', 'GT', 'SV', 'HN', 'NI', 'CR', 'PA', 'CU', 'BS', 'JM', 'HT', 'DO', 'KN', 'AG', 'DM', 'LC', 'VC', 'BB', 'GD'",
+        'south-america': "'VE', 'GY', 'SR', 'GF', 'CO', 'EC', 'PE', 'BO', 'CL', 'AR', 'PY', 'UY', 'BR', 'TT', 'AR', 'CW'",
+        'europe': "'PT', 'ES', 'FR', 'GB', 'IE', 'IT', 'DE', 'NO', 'SE', 'FI', 'CZ', 'PL', 'HU', 'BA', 'GR', 'BG', 'RO', 'UA', 'BY', 'EE', 'LV', 'LT', 'RU', 'DK', 'NL', 'BE', 'CH', 'AT', 'SI', 'SK', 'HR', 'RS', 'ME', 'AL', 'MK', 'MD', 'IS', 'CY', 'LU', 'LI', 'AD', 'MC', 'VA', 'SM'",
+        'africa': "'MA', 'DZ', 'LY', 'EG', 'MR', 'ML', 'NE', 'TD', 'SD', 'SN', 'GN', 'CI', 'BF', 'GH', 'NG', 'CM', 'CF', 'SS', 'ET', 'SO', 'GA', 'CG', 'CD', 'UG', 'KE', 'TZ', 'AO', 'ZM', 'MZ', 'NA', 'BW', 'ZW', 'ZA', 'MG', 'TN', 'CV', 'GM', 'GW', 'SL', 'LR', 'TO', 'BJ', 'GQ', 'ER', 'RW', 'BI', 'MW', 'SZ', 'LS', 'TO', 'BJ', 'TG', 'DJ'",
+        'centeral-asia': "'TR', 'SY', 'JO', 'SA', 'YE', 'OM', 'IQ', 'IR', 'TM', 'UZ', 'KZ', 'KG', 'AF', 'PK', 'TJ', 'AE', 'QA', 'KW', 'LB', 'IL', 'AZ', 'AM', 'GE'",
+        'east-asia': "'IN', 'NP', 'MM', 'TH', 'KH', 'VN', 'MY', 'ID', 'PH', 'PG', 'CN', 'MN', 'KR', 'JP', 'LK', 'BT', 'BD', 'LA', 'TL'",
+        'oceania': "'AS','AI','AQ','AW','AU','BH','BM','BQ','BV','IO','VG','BN','KY','CX','CC','KM','CK','FK','FO','FJ','PF','TF','GI','TF','GP','GU','GG','HM','IM','JE','TF','KI','MV','MT','MH','MQ','MU','YT','FM','MS','NR','NC','NZ','NU','NF','MP','KP','PW','PS','PN','PR','RE','BQ','BL','BQ','SH','MF','PM','WS','ST','SC','SG','SX','SB','GS','SJ','TK','TC','TV','UM','VI','VU','WF'"
+    },
+    'us_states': {
+        'north-east': "'ME', 'NH', 'VT', 'MA', 'RI', 'CT', 'NY', 'NJ', 'PA', 'DE', 'MD'",
+        'south-east': "'VA', 'WV', 'KY', 'TN', 'NC', 'SC', 'GA', 'FL', 'AL', 'MS', 'AR', 'LA'",
+        'mid-west': "'OH', 'MI', 'IN', 'IL', 'WI', 'MO', 'IA', 'MN', 'KS', 'NE', 'SD', 'ND'",
+        'south-west': "'TX', 'OK', 'NM', 'AZ'",
+        'rockie-mountains': "'MT', 'ID', 'WY', 'UT', 'NV', 'CO'",
+        'pacific': "'CA', 'OR', 'WA'",
+        'non-contiguous': "'PR', 'AK', 'HI'"
+    }
+}
+app.get('/gids/:region/:subRegion', async (req, res) => {
+    const { region, subRegion } = req.params
+    const q = `SELECT DISTINCT(gid) FROM regions.${region} WHERE ${region === 'countries' ? 'iso' : 'stusps'} = ANY(ARRAY[${subRegions[region][subRegion]}])`
+    try {
+        const { rows } = await pool.query(q)
+        res.status(200).send(rows.map(({ gid }) => gid))
+    } catch (err) {
+        console.log(err)
+    }
+})
+
 app.get('/popup/:region/:gid', async (req, res) => {
     const { region, gid } = req.params
     const { metric1, metric2 } = req.query

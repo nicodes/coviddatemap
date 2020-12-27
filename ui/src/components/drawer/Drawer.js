@@ -1,9 +1,16 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import ReactTooltip from 'react-tooltip';
 import Select from '../select/Select'
+
+import plusSvg from '../../assets/plus.svg'
+import minusSvg from '../../assets/minus.svg'
 import errorSvg from '../../assets/error.svg'
-import './drawer.scss'
+import arrowSvg from '../../assets/arrow.svg'
+
+import styles from './drawer.module.scss'
+
+const apiHost = process.env.REACT_APP_API_HOST
 
 const regionOptions = [
   ['Countries', 'countries'],
@@ -25,6 +32,27 @@ const metricOptions = [
   ['Male Population', 'population_male']
 ]
 
+const subRegions = {
+  countries: {
+    'north-america': 'N. America',
+    'south-america': 'S. America',
+    'europe': 'Europe',
+    'africa': 'Africa',
+    'centeral-asia': 'West Asia',
+    'east-asia': 'East Asia',
+    'oceania': 'Oceania'
+  },
+  'us_states': {
+    'north-east': 'North East',
+    'south-east': 'South East',
+    'mid-west': 'Mid West',
+    'south-west': 'South West',
+    'rockie-mountains': 'Rockie Mountains',
+    'pacific': 'Pacific',
+    'non-contiguous': 'Non-Contiguous'
+  }
+}
+
 const minDate = new Date('2020-03-23')
 
 const Drawer = ({
@@ -38,14 +66,21 @@ const Drawer = ({
   startDate, setStartDate,
   endDate, setEndDate,
   endDateBool, setEndDateBool, endDateErr,
-  setSelectedGids
+  selectedGids, setSelectedGids,
+  selectAll
 }) => {
   const startDateRef = useRef()
   const endDateRef = useRef()
-  return <div
-    className='drawer'
-    style={{ transform: drawerOpen ? undefined : 'translatex(-100%)' }}
-  >
+  const [expanded, setExpanded] = useState(false)
+
+  const updateGids = async (subRegion, add) => {
+    const res = await fetch(`${apiHost}/gids/${region}/${subRegion}`)
+    const json = await res.json()
+
+    add ? setSelectedGids([...selectedGids, ...json]) : setSelectedGids(selectedGids.filter(e => !json.includes(e))) //strip gids
+  }
+
+  return <div className={styles.drawer} style={{ transform: drawerOpen ? undefined : 'translatex(-100%)' }} >
     <h2>Region:</h2>
     <Select
       options={regionOptions}
@@ -69,7 +104,7 @@ const Drawer = ({
       }}
     />
 
-    <div className='flex'>
+    <div className={styles.flex}>
       <input
         type='checkbox'
         checked={metric2Bool}
@@ -77,7 +112,7 @@ const Drawer = ({
       />
       <h2>Ratio:</h2>
     </div>
-    <div className='flex'>
+    <div className={styles.flex}>
       <Select
         disabled={!metric2Bool}
         options={metricOptions.filter(([l, v]) =>
@@ -91,13 +126,13 @@ const Drawer = ({
         }}
       />
       {metric2Bool && metric2 == '' && <>
-        <img className='error' src={errorSvg} data-tip data-for="metric2" />
+        <img className={styles.error} src={errorSvg} data-tip data-for="metric2" />
         <ReactTooltip id="metric2" place="right">Please select a second metric</ReactTooltip>
       </>}
     </div>
 
     <h2>Granularity:</h2>
-    <div className='flex'>
+    <div className={styles.flex}>
       <input
         type='range'
         value={buckets}
@@ -105,7 +140,7 @@ const Drawer = ({
         max='6'
         onChange={e => setBuckets(e.target.value)}
       />
-      <div className='buckets'>{buckets}</div>
+      <span>{buckets}</span>
     </div>
 
     <h2>{`${endDateBool ? 'Start ' : ''}Date:`}</h2>
@@ -122,7 +157,7 @@ const Drawer = ({
       />
     </div>
 
-    <div className='flex'>
+    <div className={styles.flex}>
       <input
         type='checkbox'
         checked={endDateBool}
@@ -132,7 +167,7 @@ const Drawer = ({
     </div>
     {/* need to wrap DatePicker for grid  */}
     {/* onClick is to disable mobile keyboard  */}
-    <div className='flex' onClick={() => endDateRef.current && endDateRef.current.setBlur()}>
+    <div className={styles.flex} onClick={() => endDateRef.current && endDateRef.current.setBlur()}>
       <DatePicker
         ref={endDateRef}
         selected={endDate}
@@ -143,10 +178,25 @@ const Drawer = ({
         disabled={!endDateBool}
       />
       {endDateErr && <>
-        <img className='error' src={errorSvg} data-tip data-for="end-date" />
+        <img className={styles.error} src={errorSvg} data-tip data-for="end-date" />
         <ReactTooltip id="end-date" place="right">End Date must be after Start Date</ReactTooltip>
       </>}
     </div>
-  </div>
+
+    <button className={`${styles.flex} ${styles.srheader}`} onClick={() => setExpanded(!expanded)}>
+      Sub-regions<img style={{ transform: expanded ? 'rotate(180deg)' : null }} src={arrowSvg} />
+    </button>
+    <div className={styles.selectall}>
+      <button onClick={() => selectAll()}>Select all</button>
+      <button onClick={() => setSelectedGids([])} style={{ marginLeft: 10 }}>Clear</button>
+    </div>
+    {expanded && region !== 'us_counties' && Object.entries(subRegions[region]).map(([k, v]) => <>
+      <h3>{v}:</h3>
+      <div className={`${styles.flex} ${styles.subregions}`}>
+        <button onClick={() => updateGids(k, true)}><img src={plusSvg} /></button>
+        <button onClick={() => updateGids(k, false)}><img src={minusSvg} /></button>
+      </div>
+    </>)}
+  </div >
 }
 export default Drawer
