@@ -9,25 +9,40 @@ const Popup = ({ region, metric1, metric2, startDate, endDate, gid }) => {
     const [value, setValue] = useState()
 
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal
         const s = `${apiHost}/popup/${region}/${gid}?metric1=${metric1}&start-date=${startDate}${metric2 ? `&metric2=${metric2}` : ''}${endDate ? `&end-date=${endDate}` : ''}`
-        region != 'us_counties' ? (async () => await Promise.all([
-            fetch(s)
-                .then(async res => {
-                    const json = await res.json()
-                    setName(json.name)
-                    setValue(json.value)
-                }),
-            fetch(`${apiHost}/${region}/${gid}/flag`)
-                .then(async res => {
-                    const blob = await res.blob()
-                    setImg(URL.createObjectURL(blob))
-                })
-        ]))() : (async () => {
-            const res = await fetch(s)
-            const json = await res.json()
-            setName(json.name)
-            setValue(json.value)
+
+        region != 'us_counties' ? (async () => {
+            try {
+                await Promise.all([
+                    fetch(s, { signal })
+                        .then(async res => {
+                            const json = await res.json()
+                            setName(json.name)
+                            setValue(json.value)
+                        }),
+                    fetch(`${apiHost}/${region}/${gid}/flag`, { signal })
+                        .then(async res => {
+                            const blob = await res.blob()
+                            setImg(URL.createObjectURL(blob))
+                        })
+                ])
+            } catch (e) {
+                console.log(e)
+            }
+        })() : (async () => {
+            try {
+                const res = await fetch(s)
+                const json = await res.json()
+                setName(json.name)
+                setValue(json.value)
+            } catch (e) {
+                console.log(e)
+            }
         })()
+
+        return () => controller.abort()
     }, [region, metric1, metric2, startDate, endDate, gid])
 
     return <div className={style}>
