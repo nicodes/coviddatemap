@@ -21,6 +21,10 @@
         border: none;
         font-size: 1.6em;
         cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
         
         &.hamburger {
             width: 1.6em;
