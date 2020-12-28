@@ -114,6 +114,7 @@ const Drawer = ({
       <input
         type='checkbox'
         checked={metric2Bool}
+        disabled={metric === 'case_fatality_ratio' || metric === 'incidence_rate'}
         onChange={() => setMetric2Bool(!metric2Bool)}
       />
       <h2>Ratio:</h2>
@@ -169,7 +170,7 @@ const Drawer = ({
         checked={endDateBool}
         onChange={() => setEndDateBool(!endDateBool)}
       />
-      <h2 style={{ textDecoration: endDateBool && !endDateErr ? undefined : 'line-through' }}>End Date:</h2>
+      <h2>End Date:</h2>
     </div>
     {/* need to wrap DatePicker for grid  */}
     {/* onClick is to disable mobile keyboard  */}
@@ -190,7 +191,7 @@ const Drawer = ({
     </div>
 
     <button className={`${styles.flex} ${styles.srheader}`} onClick={() => setExpanded(!expanded)}>
-      Sub-regions<img style={{ transform: expanded ? 'rotate(180deg)' : null }} src={arrowSvg} />
+      Selectors<img style={{ transform: expanded ? 'rotate(180deg)' : null }} src={arrowSvg} />
     </button>
     <div className={styles.selectall}>
       <button onClick={() => selectAll(region)}>Select all</button>
