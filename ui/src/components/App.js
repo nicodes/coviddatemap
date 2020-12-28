@@ -19,7 +19,7 @@ const App = () => {
   const [selectedGids, setSelectedGids] = useState([])
   const endDateErr = endDateBool && endDate <= startDate
 
-  const selectAll = async () => {
+  const selectAll = async region => {
     const res = await fetch(`${apiHost}/all-gids/${region}`)
     const json = await res.json()
     setSelectedGids(json)
@@ -37,7 +37,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    selectAll()
+    region === 'countries' && selectAll(region)
   }, [region])
 
   return lastUpdate && startDate && endDate ? <main>

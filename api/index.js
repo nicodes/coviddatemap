@@ -111,6 +111,18 @@ app.get('/gids/:region/:subRegion', async (req, res) => {
     }
 })
 
+app.get('/convert/:region', async (req, res) => {
+    const gids = req.query.gids
+    const isState = req.params.region === 'us_states'
+    const q = `SELECT DISTINCT(${isState ? 's' : 'c'}.gid) FROM regions.us_counties c join regions.us_states s ON c.statefp = s.statefp where ${isState ? 'c' : 's'}.gid = ANY(ARRAY[${gids}])`
+    try {
+        const { rows } = await pool.query(q)
+        res.status(200).send(rows.map(({ gid }) => gid))
+    } catch (err) {
+        console.log(err)
+    }
+})
+
 app.get('/popup/:region/:gid', async (req, res) => {
     const { region, gid } = req.params
     const { metric1, metric2 } = req.query

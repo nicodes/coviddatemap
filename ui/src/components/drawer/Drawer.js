@@ -85,9 +85,15 @@ const Drawer = ({
     <Select
       options={regionOptions}
       value={region}
-      onChange={value => {
+      onChange={async value => {
+        if (region === 'countries') {
+          await selectAll(value)
+        } else {
+          const res = await fetch(`${apiHost}/convert/${value}?gids=${selectedGids}`)
+          const json = await res.json()
+          setSelectedGids(json)
+        }
         setRegion(value)
-        setSelectedGids([])
       }}
     />
 
@@ -187,7 +193,7 @@ const Drawer = ({
       Sub-regions<img style={{ transform: expanded ? 'rotate(180deg)' : null }} src={arrowSvg} />
     </button>
     <div className={styles.selectall}>
-      <button onClick={() => selectAll()}>Select all</button>
+      <button onClick={() => selectAll(region)}>Select all</button>
       <button onClick={() => setSelectedGids([])} style={{ marginLeft: 10 }}>Clear</button>
     </div>
     {expanded && region !== 'us_counties' && Object.entries(subRegions[region]).map(([k, v]) => <>
