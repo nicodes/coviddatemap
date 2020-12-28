@@ -8,7 +8,7 @@ const Drawer = ({ drawerOpen, setDrawerOpen }) =>
       <img src={hamburgerSvg} />
     </button>
     <h1>Covid Date Map</h1>
-    <button>About</button>
+    {/* <button>About</button> */}
     <button>
       <a target='_blank' href='https://www.paypal.com/donate?hosted_button_id=2HHJW2SLA3UVC'>
         Donate
