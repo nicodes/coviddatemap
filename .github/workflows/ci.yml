@@ -1,4 +1,4 @@
-name: CT Calc Deploy
+name: Covid Date Map Deploy
 on:
   push:
     branches: main
