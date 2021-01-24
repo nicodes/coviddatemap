@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { style } from './popup.module.scss'
 
-const apiHost = process.env.REACT_APP_API_HOST
+const apiHost = process.env.REACT_APP_API_URL
 
 const Popup = ({ region, metric1, metric2, startDate, endDate, gid }) => {
     const [name, setName] = useState()

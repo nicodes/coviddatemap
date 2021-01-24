@@ -10,7 +10,7 @@ import arrowSvg from '../../assets/arrow.svg'
 
 import styles from './drawer.module.scss'
 
-const apiHost = process.env.REACT_APP_API_HOST
+const apiHost = process.env.REACT_APP_API_URL
 
 const regionOptions = [
   ['Countries', 'countries'],

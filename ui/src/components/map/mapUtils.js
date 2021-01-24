@@ -1,4 +1,4 @@
-const apiHost = process.env.REACT_APP_API_HOST
+const apiHost = process.env.REACT_APP_API_URL
 
 const reqQuery = (metric, metric2, metric2Bool, buckets, selectedGids, startDate, endDateBool, endDate, endDateErr) =>
     `?metric=${metric}`

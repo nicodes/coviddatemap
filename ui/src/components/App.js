@@ -3,7 +3,7 @@ import Header from './header/Header'
 import Drawer from './drawer/Drawer'
 import Map from './map/Map.js'
 
-const apiHost = process.env.REACT_APP_API_HOST
+const apiHost = process.env.REACT_APP_API_URL
 
 const App = () => {
   const [drawerOpen, setDrawerOpen] = useState(true)

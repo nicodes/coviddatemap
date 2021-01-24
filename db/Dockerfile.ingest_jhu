@@ -1,3 +1,5 @@
+# used by cron data updates
+
 FROM python:3
 WORKDIR /app
 
@@ -7,6 +9,6 @@ RUN apt-get upgrade -y \
 
 RUN pip install --no-cache-dir pandas
 
-COPY ingest_jhu.sh parse_jhu.py .
+COPY ingest_jhu.sh parse_jhu.py ./
 
 CMD ./ingest_jhu.sh

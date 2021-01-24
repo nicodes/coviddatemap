@@ -1,0 +1,9 @@
+# artifacts
+node_modules
+
+# misc
+.env*
+Dockerfile*
+.dockerignore
+.gitignore
+README.md

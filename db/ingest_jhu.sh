@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# docker build -f db/Dockerfile.ingest_jhu -t ingest_jhu db
-# docker run --env-file .env ingest_jhu
+# docker run --env-file ~/coviddatemap/.env.prod --rm $(docker build -q -f db/Dockerfile.ingest_jhu ~/coviddatemap/db)
+
+# docker build -t ingest_jhu -f ~/coviddatemap/db/Dockerfile.ingest_jhu ~/coviddatemap/db
 # 0 * * * * docker run --env-file ~/coviddatemap/.env.prod ingest_jhu
 
-export PGHOST=host.docker.internal # todo make configurable
+export PGHOST=172.17.0.1 # todo make configurable
 export PGPORT=$DB_PORT
 export PGDATABASE=$DB_NAME
 export PGUSER=$ADMIN_USER
