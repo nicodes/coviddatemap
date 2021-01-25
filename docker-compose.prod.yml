@@ -29,4 +29,4 @@ services:
   ports:
    - 80:80
   volumes:
-   - ./ui/build:/usr/share/nginx/html
+   - ./build:/usr/share/nginx/html
