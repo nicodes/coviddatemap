@@ -52,6 +52,8 @@ jobs:
     - name: Build UI
       working-directory: ./ui
       run: npm run build
+      env:
+        CI: false # TODO fix suppress build warnings
     - name: Copy Build to Remote
       uses: appleboy/scp-action@master
       with:
