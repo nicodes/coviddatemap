@@ -114,6 +114,7 @@ CREATE TYPE country_name_enum AS ENUM (
     'Mauritania',
     'Mauritius',
     'Mexico',
+    'Micronesia',
     'Moldova',
     'Monaco',
     'Mongolia',

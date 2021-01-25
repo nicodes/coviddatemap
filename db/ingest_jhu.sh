@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# docker run --env-file ~/coviddatemap/.env.prod --rm $(docker build -q -f db/Dockerfile.ingest_jhu ~/coviddatemap/db)
-
-# docker build -t ingest_jhu -f ~/coviddatemap/db/Dockerfile.ingest_jhu ~/coviddatemap/db
-# 0 * * * * docker run --env-file ~/coviddatemap/.env.prod ingest_jhu
+# docker build -t nicodes/coviddatemap-ingest-jhu -f db/Dockerfile.ingest_jhu db
+# docker push nicodes/coviddatemap-ingest-jhu
+# 0 * * * * docker run --env-file ~/app/.env.prod nicodes/coviddatemap-ingest-jhu
 
 export PGHOST=172.17.0.1 # todo make configurable
 export PGPORT=$DB_PORT
 export PGDATABASE=$DB_NAME
-export PGUSER=$ADMIN_USER
-export PGPASSWORD=$ADMIN_USER_PWD
+export PGUSER=$DB_ADMIN_USR
+export PGPASSWORD=$DB_ADMIN_PWD
 
 echo Staging JHU data from $(date)
 url=https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports
