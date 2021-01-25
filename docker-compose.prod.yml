@@ -3,8 +3,8 @@ services:
  db:
   image: postgis/postgis:13-master
   environment:
-   - POSTGRES_USER=$ADMIN_USER
-   - POSTGRES_PASSWORD=$ADMIN_USER_PWD
+   - POSTGRES_USER=$DB_ADMIN_USR
+   - POSTGRES_PASSWORD=$DB_ADMIN_PWD
   ports:
    - 5432:$DB_PORT
   volumes:
@@ -20,8 +20,8 @@ services:
    - PGHOST=db
    - PGPORT=$DB_PORT
    - PGDATABASE=$DB_NAME
-   - PGUSER=$API_USER
-   - PGPASSWORD=$API_USER_PWD
+   - PGUSER=$DB_API_USR
+   - PGPASSWORD=$DB_API_PWD
   ports:
    - $API_PORT:$API_PORT
  ui:
